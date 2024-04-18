@@ -6,12 +6,7 @@ const path = require('path');
 
 require('firebase/auth');
 
-// Configuración de Firebase
-const firebaseConfig = {
-  // Tu configuración de Firebase aquí
-};
 
-firebase.initializeApp(firebaseConfig);
 
 // Configurar bodyParser para manejar datos de formularios
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,7 +16,8 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // Ruta para enviar el archivo email-password.html desde /public
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../email-password.html'));
+  res.sendFile(path.join(__dirname, '/email-password.html'));
+  //res.redirect('/email-password.html');
 });
 
 // Ruta para manejar la solicitud de inicio de sesión (POST)
