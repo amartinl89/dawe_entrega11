@@ -1,0 +1,19 @@
+{
+  "name": "dawe_entrega11",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./public/js/main.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "firebase": "^10.11.0",
+    "mongoose": "^8.3.2",
+    "path": "^0.12.7"
+  }
+}
