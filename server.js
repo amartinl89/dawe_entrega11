@@ -5,15 +5,17 @@ const bodyParser = require('body-parser');
 const firebase = require('firebase/app');
 const path = require('path');
 const MongoStore = require('connect-mongo');
+const mongoose = require('mongoose');
 require('firebase/auth');
+const { subirUsuario } = require('./public/js/main') //Añadir aquí las funciones que se exportaron desde main.js
 // Configurar la carpeta pública
 session = require('express-session');
 const Client = require('./public/models/cliente'); // Importar el modelo de cliente
+// Configurar body-parser para analizar las solicitudes con cuerpo en formato JSON
+app.use(bodyParser.json());
 
-const mongojs = require('mongojs');
-const db = mongojs('clientSchema', ['Cliente']);
-
-
+// Configurar body-parser para analizar las solicitudes con cuerpo en formato URL-encoded
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
   store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/dawe11' }),
   secret: 'secreto',
@@ -29,8 +31,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs'); // especifica que motor de plantillas usar, en nuestro caso EJS
 app.set('views', 'views'); // indica que las plantillas estan en la carpeta “views” (segundo argumento)
 
+const mongoUrl = 'mongodb://127.0.0.1:27017/dawe11';
+mongoose.connect(
+  mongoUrl, // Utiliza la URL de conexión de la variable de entorno
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }
+);
+
 app.get('/', (req, res) => {
-  //res.sendFile(path.join(__dirname, '../email-password.html'));
    if (req.session.email) {
      // Si hay una sesión iniciada, redirigir a /user
       res.redirect('/user');
@@ -40,27 +50,13 @@ app.get('/', (req, res) => {
   }
 });
 
-// app.get('/user', (req, res) => {
-//   db.Client.find((err, datos) => {
-//     if(err) {
-//       res.send("Error");
-//    } else {
-//     return res.render('user', { email: req.session.email, clients: datos
-//       });
-//   }});
-// });
-
 app.get('/user', async (req, res) => {
   try {
     // Consultar todos los clientes desde la base de datos
-    const clients = await  Client.find().lean;
-    // db.clientSchema.find((err, clients) => {
-    //   if(err) {
-    //       res.send("Error");
-    //   } else {
-    //       res.send(clients);
-    //  }
-    //  });
+    if (!req.session.email) {
+      return res.send('Inicie sesión para primero');
+    }
+    const clients = await  Client.find();
 
     // Si se encontraron clientes, renderizar la vista con los clientes encontrados
     res.render('user', { email: req.session.email, clients: clients });
@@ -88,29 +84,27 @@ app.listen(PORT, () => {
   console.log(`Servidor iniciado en puerto ${PORT}`);
 });
 
-const exp = require('constants');
-
 // Ruta para agregar un nuevo cliente
-app.post('/clients/add', (req, res) => {
+app.post('/user/add', async (req, res) => {
   const { nombre, apellido, email } = req.body;
-
-  // Crear un nuevo cliente con los datos recibidos
-  const newClient = new Client({ nombre, apellido, email });
-
   // Guardar el nuevo cliente en la base de datos
-  newClient.save()
-    .then(() => {
-      console.log('Cliente agregado exitosamente');
+  if(nombre == '' || apellido == '' || email == ''){
+    console.log('Faltan datos');
+    res.redirect('/user');
+  }
+  let newUser = subirUsuario(nombre, apellido, email)
+    try{
+      console.log('Cliente añadido correctamente'. newUser);
       res.redirect('/user'); // Redirigir al usuario después de agregar el cliente
-    })
-    .catch((err) => {
-      console.error('Error al agregar cliente:', err);
+    }
+    catch(err){
+      console.error('Error al añadir cliente:', err);
       res.status(500).send('Error interno del servidor'); // Enviar una respuesta de error al cliente
-    });
-});
+    }
+  });
 
 // Ruta para eliminar un cliente
-app.get('/clients/delete/:id', (req, res) => {
+app.get('/user/delete/:id', (req, res) => {
   const { id } = req.params;
   Client.findByIdAndDelete(id)
     .then(() => res.redirect('/user'))
@@ -118,7 +112,7 @@ app.get('/clients/delete/:id', (req, res) => {
 });
 
 // Ruta para editar un cliente
-app.post('/clients/edit/:id', (req, res) => {
+app.post('/user/edit/:id', (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
   Client.findByIdAndUpdate(id, { name })

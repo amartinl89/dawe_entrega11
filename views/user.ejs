@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="/server.js"></script>
   <title>User Dashboard</title>
 </head>
 <body>
@@ -11,7 +10,7 @@
 
   <!-- Aquí puedes agregar el formulario para administrar clientes -->
   <!-- Ejemplo: -->
-  <form action="/clients/add" method="POST">
+  <form action="/user/add" id="formulario" method="POST">
     <fieldset>
       <legend>Agregar Cliente</legend>
       <label for="nombre">Nombre:</label>
@@ -26,7 +25,7 @@
   <div>
     <h2>Clientes</h2>
     <ul>
-      <% if (Array.isArray(clients) && clients.length > 0) { %>
+      <% if (clients.length > 0) { %>
         <% clients.forEach(function(client) { %>
           <li><%= client.nombre %> <%= client.apellido %> - <%= client.email %></li>
         <% }); %>
