@@ -17,11 +17,14 @@ app.use(session({
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.set('view engine', 'ejs'); // especifica que motor de plantillas usar, en nuestro caso EJS
+app.set('views', 'views'); // indica que las plantillas estan en la carpeta “views” (segundo argumento)
+
 app.get('/', (req, res) => {
   //res.sendFile(path.join(__dirname, '../email-password.html'));
    if (req.session.email) {
      // Si hay una sesión iniciada, redirigir a /user
-     return res.redirect('/user');
+     return res.render('user',{email: req.session.email});
    } else {
     // Si no hay sesión iniciada, redirigir a /email-password.html
     return res.redirect('/email-password.html');
