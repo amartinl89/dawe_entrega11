@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 // Definir el esquema de usuario
-const userSchema = new mongoose.Schema({
+const clientSchema = new mongoose.Schema({
   nombre: {
     type: String,
     required: true
@@ -19,6 +19,6 @@ const userSchema = new mongoose.Schema({
 });
 
 // Crear un modelo de usuario basado en el esquema
-const User = mongoose.model('User', userSchema);
+const Cliente = mongoose.model('Cliente', clientSchema);
 
-module.exports = User;
+module.exports = Cliente;

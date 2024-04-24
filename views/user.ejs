@@ -23,7 +23,18 @@
       <button type="submit">Enviar</button>
     </fieldset>
   </form>
-  
+  <div>
+    <h2>Clientes</h2>
+    <ul>
+      <% if (Array.isArray(clients) && clients.length > 0) { %>
+        <% clients.forEach(function(client) { %>
+          <li><%= client.nombre %> <%= client.apellido %> - <%= client.email %></li>
+        <% }); %>
+      <% } else { %>
+        <li>No se encontraron clientes.</li>
+      <% } %>
+    </ul>
+    </div>
   <a href="/logout">Logout</a>
 </body>
 </html>

@@ -8,12 +8,21 @@ const MongoStore = require('connect-mongo');
 require('firebase/auth');
 // Configurar la carpeta pública
 session = require('express-session');
+const Client = require('./public/models/cliente'); // Importar el modelo de cliente
+
+const mongojs = require('mongojs');
+const db = mongojs('clientSchema', ['Cliente']);
+
 
 app.use(session({
   store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/dawe11' }),
   secret: 'secreto',
   resave: false,
   saveUninitialized: false,
+  useNewUrlParser: true,
+	useUnifiedTopology: true,
+	useCreateIndex: true,
+	useFindAndModify: false
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -31,9 +40,36 @@ app.get('/', (req, res) => {
   }
 });
 
-app.get('/user', (req, res) => {
-  return res.render('user',{email: req.session.email});
+// app.get('/user', (req, res) => {
+//   db.Client.find((err, datos) => {
+//     if(err) {
+//       res.send("Error");
+//    } else {
+//     return res.render('user', { email: req.session.email, clients: datos
+//       });
+//   }});
+// });
+
+app.get('/user', async (req, res) => {
+  try {
+    // Consultar todos los clientes desde la base de datos
+    const clients = await  Client.find().lean;
+    // db.clientSchema.find((err, clients) => {
+    //   if(err) {
+    //       res.send("Error");
+    //   } else {
+    //       res.send(clients);
+    //  }
+    //  });
+
+    // Si se encontraron clientes, renderizar la vista con los clientes encontrados
+    res.render('user', { email: req.session.email, clients: clients });
+  } catch (error) {
+    console.error('Error al obtener clientes:', error);
+    return res.status(500).send('Error interno del servidor');
+  }
 });
+ 
 
 app.get('/login',(req,res) => {
   const { email} = req.query;
@@ -51,7 +87,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor iniciado en puerto ${PORT}`);
 });
-const Client = require('./public/models/user'); // Importar el modelo de cliente
+
 const exp = require('constants');
 
 // Ruta para agregar un nuevo cliente
