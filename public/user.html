@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/server.js"></script>
+  <title>User Dashboard</title>
+</head>
+<body>
+  <h1>Bienvenido, <%= email %></h1>
+
+  <!-- Aquí puedes agregar el formulario para administrar clientes -->
+  <!-- Ejemplo: -->
+  <form action="/clients/add" method="POST">
+    <fieldset>
+      <legend>Agregar Cliente</legend>
+      <label for="nombre">Nombre:</label>
+      <input type="text" name="nombre" id="nombre" required>
+      <label for="apellido">Apellido:</label>
+      <input type="text" name="apellido" id="apellido" required>
+      <label for="email">Email:</label>
+      <input type="text" name="email" id="email" required>
+      <button type="submit">Enviar</button>
+    </fieldset>
+  </form>
+  <div>
+    <h2>Clientes</h2>
+    <ul>
+      <% clients.forEach(function(client) { %>
+        <li><%= client.nombre %> <%= client.apellido %> - <%= client.email %></li>
+      <% }); %>
+    </ul>
+  <a href="/logout">Logout</a>
+</body>
+</html>
