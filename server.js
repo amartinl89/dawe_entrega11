@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
   //res.sendFile(path.join(__dirname, '../email-password.html'));
    if (req.session.email) {
      // Si hay una sesión iniciada, redirigir a /user
-     return res.render('user',{email: req.session.email});
+      res.redirect('/user');
    } else {
     // Si no hay sesión iniciada, redirigir a /email-password.html
     return res.redirect('/email-password.html');
@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/user', (req, res) => {
-  res.redirect('/user.html');
+  return res.render('user',{email: req.session.email});
 });
 
 app.get('/login',(req,res) => {
