@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Dashboard</title>
+  <script src="js/main.js"></script>
 </head>
 <body>
   <h1>Bienvenido, <%= email %></h1>
@@ -27,7 +28,12 @@
     <ul>
       <% if (clients.length > 0) { %>
         <% clients.forEach(function(client) { %>
-          <li><%= client.nombre %> <%= client.apellido %> - <%= client.email %></li>
+          
+          <li><%= client.nombre %> <%= client.apellido %>
+          <button onclick="editarCliente('<%= client._id %>')">Editar</button>
+          <!-- Botón de Borrar -->
+          <button onclick="borrarCliente('<%= client._id %>')">Borrar</button>
+        </li>
         <% }); %>
       <% } else { %>
         <li>No se encontraron clientes.</li>
