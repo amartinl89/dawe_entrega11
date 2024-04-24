@@ -10,7 +10,7 @@ require('firebase/auth');
 session = require('express-session');
 
 app.use(session({
-  store: MongoStore.create({ mongoUrl: 'mongodb://0.0.0.0:27017/dawe' }),
+  store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/dawe11' }),
   secret: 'secreto',
   resave: false,
   saveUninitialized: false,
@@ -19,28 +19,29 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   //res.sendFile(path.join(__dirname, '../email-password.html'));
-  // if (req.session.email) {
-  //   // Si hay una sesión iniciada, redirigir a /user
-  //   return res.redirect('/user');
-  // } else {
+   if (req.session.email) {
+     // Si hay una sesión iniciada, redirigir a /user
+     return res.redirect('/user');
+   } else {
     // Si no hay sesión iniciada, redirigir a /email-password.html
     return res.redirect('/email-password.html');
   }
-);
+});
 
 app.get('/user', (req, res) => {
-  req.session.auth = true; // Iniciar sesión
-  res.redirect('/user');
+  res.redirect('/user.html');
 });
 
 app.get('/login',(req,res) => {
-  const { email, password } = req.query;
+  const { email} = req.query;
+  req.session.auth = true; // Iniciar sesión
   req.session.email = email;
+  session
   app.use(session({
     store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/dawe'})
     }));
 
-  res.end('done');
+  res.redirect('/');
 });
 
 const PORT = process.env.PORT || 3000;
