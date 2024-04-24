@@ -7,7 +7,7 @@ const path = require('path');
 const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
 require('firebase/auth');
-const { subirUsuario } = require('./public/js/main') //Añadir aquí las funciones que se exportaron desde main.js
+const { subirUsuario, eliminarCliente } = require('./public/js/controladorCliente') //Añadir aquí las funciones que se exportaron desde main.js
 // Configurar la carpeta pública
 session = require('express-session');
 const Client = require('./public/models/cliente'); // Importar el modelo de cliente
@@ -27,7 +27,21 @@ app.use(session({
 	useFindAndModify: false
 }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {
+  // Función para establecer los encabezados HTTP de acuerdo al tipo de archivo
+  setHeaders: (res, filePath) => {
+    const contentTypeMap = {
+      '.html': 'text/html',
+      '.js': 'text/javascript',
+      '.ejs': 'text/ejs'
+    };
+
+    const contentType = contentTypeMap[path.extname(filePath).toLowerCase()];
+    if (contentType) {
+      res.setHeader('Content-Type', contentType);
+    }
+  }
+}));
 app.set('view engine', 'ejs'); // especifica que motor de plantillas usar, en nuestro caso EJS
 app.set('views', 'views'); // indica que las plantillas estan en la carpeta “views” (segundo argumento)
 
@@ -104,15 +118,19 @@ app.post('/user/add', async (req, res) => {
   });
 
 // Ruta para eliminar un cliente
-app.get('/user/delete/:id', (req, res) => {
-  const { id } = req.params;
-  Client.findByIdAndDelete(id)
-    .then(() => res.redirect('/user'))
-    .catch((err) => console.log(err));
+app.post('/user/delete', (req, res) => {
+  const { id } = req.body;
+  try{
+    eliminarCliente(id);
+    res.redirect('/user');
+  }catch(error){
+    console.error('Error al eliminar cliente:', error);
+    res.status(500).send('Error interno del servidor');
+}
 });
 
 // Ruta para editar un cliente
-app.post('/user/edit/:id', (req, res) => {
+app.post('/user/edit', (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
   Client.findByIdAndUpdate(id, { name })
