@@ -56,6 +56,14 @@
       <% } %>
     </ul>
     </div>
-  <a href="/?logout">Logout</a>
+  <a href="#" onclick="logout()">Logout</a>
+
+  <script>
+    // Función para cerrar sesión y redirigir a '/'
+    function logout() {
+      // Hacer una redirección a '/?logout' para indicar que se ha cerrado sesión
+      window.location.href = '/?logout';
+    }
+  </script>
 </body>
 </html>
