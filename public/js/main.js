@@ -18,5 +18,30 @@ async function borrarCliente(id){
     }  catch (error) {
         console.error('Error al eliminar cliente:', error);
     }
+}
+
+async function seleccionarCliente(id){
+    try {
+            const response = await fetch("/user/select", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ id }) // Enviar el ID como objeto JSON
+        });
+        if (response.ok) {
+            // Redirigir a la URL con el parámetro clienteEditar
+            //const redirectUrl = `/user?clienteEditar=${id}`;
+            //window.location.href = redirectUrl;
+            const redirectUrl = await response.url;
+            console.error('Redirigiendo a:', redirectUrl);
+            window.location.href = redirectUrl;
+        } else {
+            console.error('Error al seleccionar cliente:', response.statusText);
+        }
+        
+    }  catch (error) {
+        console.error('Error al eliminar cliente:', error);
+    }
 
 }

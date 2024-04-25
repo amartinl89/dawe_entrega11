@@ -7,7 +7,7 @@ const path = require('path');
 const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
 require('firebase/auth');
-const { subirUsuario, eliminarCliente } = require('./public/js/controladorCliente') //Añadir aquí las funciones que se exportaron desde main.js
+const { subirUsuario, eliminarCliente, seleccionarCliente, editarCliente } = require('./public/js/controladorCliente') //Añadir aquí las funciones que se exportaron desde main.js
 // Configurar la carpeta pública
 session = require('express-session');
 const Client = require('./public/models/cliente'); // Importar el modelo de cliente
@@ -71,9 +71,10 @@ app.get('/user', async (req, res) => {
       return res.send('Inicie sesión para primero');
     }
     const clients = await  Client.find();
-
+    const { clienteEditarNombre, clienteEditarApellido, clienteEditarEmail, clienteEditarId } = req.query;
     // Si se encontraron clientes, renderizar la vista con los clientes encontrados
-    res.render('user', { email: req.session.email, clients: clients });
+    res.render('user', { email: req.session.email, clients: clients, clienteEditarNombre: clienteEditarNombre,
+    clienteEditarApellido: clienteEditarApellido, clienteEditarEmail: clienteEditarEmail, clienteEditarId: clienteEditarId});
   } catch (error) {
     console.error('Error al obtener clientes:', error);
     return res.status(500).send('Error interno del servidor');
@@ -131,9 +132,28 @@ app.post('/user/delete', (req, res) => {
 
 // Ruta para editar un cliente
 app.post('/user/edit', (req, res) => {
-  const { id } = req.params;
-  const { name } = req.body;
-  Client.findByIdAndUpdate(id, { name })
-    .then(() => res.redirect('/user'))
-    .catch((err) => console.log(err));
+  const { id, nombre, apellido, email } = req.body;
+  try{
+    editarCliente(nombre, apellido, email, id);
+    res.redirect('/user');
+  }catch(error){
+    console.error('Error al eliminar cliente:', error);
+    res.status(500).send('Error interno del servidor');
+}
 });
+
+
+app.post('/user/select', async (req, res) => {
+  const { id } = req.body;
+  try{
+  let clienteEditar = await seleccionarCliente(id)
+  console.log('Cliente seleccionado:', clienteEditar);
+  const clients = await  Client.find();
+  //res.render('user', { email: "prueba", clients: clients, clienteEditar: clienteEditar});
+  const redirectUrl = `/user?clienteEditarNombre=${clienteEditar.nombre}&clienteEditarApellido=${clienteEditar.apellido}&clienteEditarEmail=${clienteEditar.email}&clienteEditarId=${clienteEditar._id}`;
+  res.redirect(redirectUrl);
+  }catch(error){
+    console.error('Error al seleccionar cliente:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+  });

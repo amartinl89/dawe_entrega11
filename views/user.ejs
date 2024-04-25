@@ -11,8 +11,23 @@
 
   <!-- Aquí puedes agregar el formulario para administrar clientes -->
   <!-- Ejemplo: -->
-  <form action="/user/add" id="formulario" method="POST">
+  <% if (clienteEditarNombre!=null) { %>
+  <form action="/user/edit" id="formulario" method="POST">
     <fieldset>
+        <legend>Editar Cliente</legend>
+        <label for="nombre">Nombre:</label>
+        <input type="text" name="nombre" value="<%= clienteEditarNombre %>" required>
+        <label for="apellido">Apellido:</label>
+        <input type="text" name="apellido" value="<%= clienteEditarApellido %>" required>
+        <label for="email">Email:</label>
+        <input type="text" name="email" value="<%= clienteEditarEmail %>" required>
+        <input type="hidden" name="id" value="<%= clienteEditarId %>" required>
+        <button type="submit">Editar</button>
+      </fieldset>
+    </form>
+      <% } else { %>
+      <form action="/user/add" id="formulario" method="POST">
+      <fieldset>
       <legend>Agregar Cliente</legend>
       <label for="nombre">Nombre:</label>
       <input type="text" name="nombre" id="nombre" required>
@@ -21,6 +36,7 @@
       <label for="email">Email:</label>
       <input type="text" name="email" id="email" required>
       <button type="submit">Enviar</button>
+      <% } %>
     </fieldset>
   </form>
   <div>
@@ -30,13 +46,13 @@
         <% clients.forEach(function(client) { %>
           
           <li><%= client.nombre %> <%= client.apellido %>
-          <button onclick="editarCliente('<%= client._id %>')">Editar</button>
+          <button onclick="seleccionarCliente('<%= client._id %>')">Editar</button>
           <!-- Botón de Borrar -->
           <button onclick="borrarCliente('<%= client._id %>')">Borrar</button>
         </li>
         <% }); %>
       <% } else { %>
-        <li>No se encontraron clientes.</li>
+        <li>No se han encontrado clientes.</li>
       <% } %>
     </ul>
     </div>
