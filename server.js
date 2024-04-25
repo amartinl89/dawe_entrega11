@@ -68,7 +68,7 @@ app.get('/user', async (req, res) => {
   try {
     // Consultar todos los clientes desde la base de datos
     if (!req.session.email) {
-      return res.send('Inicie sesión para primero');
+      return res.send('Please login first.');
     }
     const clients = await  Client.find();
     const { clienteEditarNombre, clienteEditarApellido, clienteEditarEmail, clienteEditarId } = req.query;
