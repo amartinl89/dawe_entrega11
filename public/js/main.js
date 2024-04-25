@@ -44,5 +44,22 @@ async function seleccionarCliente(id){
         console.error('Error al eliminar cliente:', error);
     }
 
+async function logoutUser() {
+    try {
+        const response = await fetch("http://localhost:3000/email-password.html?logout", {
+            method: "GET"}
+        });
+        if (response.ok) {
+            const redirectUrl = await response.url;
+            console.error('Redirigiendo a:', redirectUrl);
+            window.location.href = redirectUrl;
+        } else {
+            console.error('Error al cerrar sesión:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+    }
+}
+
 
 }
