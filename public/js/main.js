@@ -43,12 +43,13 @@ async function seleccionarCliente(id){
     }  catch (error) {
         console.error('Error al eliminar cliente:', error);
     }
+}
 
 async function logoutUser() {
     try {
         const response = await fetch("http://localhost:3000/email-password.html?logout", {
             method: "GET"}
-        });
+        );
         if (response.ok) {
             const redirectUrl = await response.url;
             console.error('Redirigiendo a:', redirectUrl);
@@ -62,4 +63,3 @@ async function logoutUser() {
 }
 
 
-}
