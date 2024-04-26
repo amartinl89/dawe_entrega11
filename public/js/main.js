@@ -41,7 +41,7 @@ async function seleccionarCliente(id){
         }
         
     }  catch (error) {
-        console.error('Error al eliminar cliente:', error);
+        console.error('Error al  eliminar cliente:', error);
     }
 }
 
