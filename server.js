@@ -55,6 +55,12 @@ mongoose.connect(
 );
 
 app.get('/', (req, res) => {
+    // Comprobar si se envió el parámetro logout en la URL
+    if (req.query.logout) {
+        // Si se envió el parámetro logout, redirigir a /email-password.html?logout
+        return res.redirect('/email-password.html?logout=true');
+    }
+
    if (req.session.email) {
      // Si hay una sesión iniciada, redirigir a /user
       res.redirect('/user');
@@ -157,3 +163,16 @@ app.post('/user/select', async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
   });
+
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error al cerrar sesión:', err);
+            res.status(500).send('Error interno del servidor');
+        } else {
+            console.log('Sesión cerrada exitosamente');
+            res.redirect('/?logout=true');
+        }
+    });
+});
+

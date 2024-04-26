@@ -47,9 +47,9 @@ async function seleccionarCliente(id){
 
 async function logoutUser() {
     try {
-        const response = await fetch("http://localhost:3000/email-password.html?logout", {
-            method: "GET"}
-        );
+        const response = await fetch("http://localhost:3000/logout", {
+            method: "GET"
+        });
         if (response.ok) {
             const redirectUrl = await response.url;
             console.error('Redirigiendo a:', redirectUrl);
@@ -61,5 +61,6 @@ async function logoutUser() {
         console.error('Error al cerrar sesión:', error);
     }
 }
+
 
 
