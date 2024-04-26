@@ -47,7 +47,7 @@ async function seleccionarCliente(id){
 
 async function logoutUser() {
     try {
-        const response = await fetch("http://138.68.118.30:3000/logout", {
+        const response = await fetch("http://143.198.249.125:3000/logout", {
             method: "GET"
         });
         if (response.ok) {
